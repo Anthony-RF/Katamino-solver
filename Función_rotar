@@ -1,1 +1,21 @@
-
+#Dominio:  Dos enteros, FILAS y COLUMNAS
+#Codominio: una matriz nula de FILASxCOLUMNAS
+def matVacia(FILAS, COLUMNAS):
+    matResp = []
+    for _ in range(FILAS):
+        fila = []
+        for _ in range(COLUMNAS):
+            fila.append(0)
+        matResp.append(fila)
+    return matResp
+    
+#Dominio:   Una matriz mat
+#Codominio: La matriz transpuesta de mat
+def transpuesta(mat):
+    F = len(mat)
+    C = len(mat[0])
+    resp = matVacia(C,F)
+    for i in range(F):
+        for j in range(C):
+            resp[j][i] = mat[i][j]
+    return resp

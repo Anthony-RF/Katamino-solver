@@ -24,3 +24,15 @@ def printMatriz(mat):
     for fil in mat:
         print(fil)
     print()
+
+
+#Dominio:   Una matriz mat
+#Codominio: La matriz transpuesta de mat
+def transpuesta(mat):
+    F = len(mat)
+    C = len(mat[0])
+    resp = matVacia(C,F)
+    for i in range(F):
+        for j in range(C):
+            resp[j][i] = mat[i][j]
+            

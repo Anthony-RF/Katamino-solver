@@ -36,3 +36,9 @@ def transpuesta(mat):
         for j in range(C):
             resp[j][i] = mat[i][j]
             
+def invertircolumnasmatriz(ma):
+    mtrans = transpuesta(ma)
+    mtransinvertida = matVacia(4,4)
+    for linea in range(4):
+        mtransinvertida[3-linea] = mtrans[linea]
+    return transpuesta(mtransinvertida)

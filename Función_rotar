@@ -19,3 +19,8 @@ def transpuesta(mat):
         for j in range(C):
             resp[j][i] = mat[i][j]
     return resp
+    
+def printMatriz(mat):
+    for fil in mat:
+        print(fil)
+    print()

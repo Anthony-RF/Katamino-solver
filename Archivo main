@@ -1,0 +1,172 @@
+# Función generar matriz nula (genera una matriz de solo 0):
+def matVacia(FILAS, COLUMNAS):
+    matResp = []
+    for _ in range(FILAS):
+        fila = []
+        for _ in range(COLUMNAS):
+            fila.append(0)
+        matResp.append(fila)
+    return matResp
+
+def matpuntos(FILAS, COLUMNAS):
+    matResp = []
+    for _ in range(FILAS):
+        fila = []
+        for _ in range(COLUMNAS):
+            fila.append(".")
+        matResp.append(fila)
+    return matResp
+
+# Función transponer matriz:
+def transpuesta(mat):
+    F = len(mat)
+    C = len(mat[0])
+    resp = matVacia(C, F)
+    for i in range(F):
+        for j in range(C):
+            resp[j][i] = mat[i][j]
+    return resp
+
+
+# Funció Swap matriz Reflejar:
+def Swap(ma):
+    mtrans = transpuesta(ma)
+    mtransinvertida = matVacia(4,4)
+    for linea in range(4):
+        mtransinvertida[3-linea] = mtrans[linea]
+    return transpuesta(mtransinvertida)
+
+
+# Función imprimir arreglo (Imprime la matriz de salida como un arreglo):
+def imprime_arreglo(q):
+    print()
+    for i in range(len(q)):
+        for j in range(len(q[-1])):
+            print(q[i][j], end=' ')
+        print()
+    print()
+
+# Función imprimir matriz (Imprime la matriz de salida):
+def imprime_matriz(mat):
+    for fil in mat:
+        print(fil)
+    print()
+
+# Función recibir matriz (recibe el arreglo de entrada  y lo convierte en matriz):
+def recibe_pieza():
+    matriz = []
+    for i in range(4):
+        z = []
+        a = input()
+        for i in a:
+            z.append(i)
+        matriz.append(z)
+    return matriz
+
+
+# Función rotar matriz (rota la matriz en 90dg "a" veces):
+def rotar(a,m):
+    for k in range(a):
+        m = Swap((transpuesta(m)))
+    return m
+
+
+mat_ejemplo = [[".",".",".","."],
+              [".",".","#","."],
+              [".","#","#","."],
+              [".",".",".","."]]
+
+
+def cordenadas_pieza(pieza):
+    cordenadas = []
+    for i in range(4):
+        for j in range(4):
+            if pieza[i][j] != ".":
+                cordenadas.append([i,j])
+    return cordenadas
+
+
+def largo_pieza(pieza):
+    c=0
+    ct=0
+    for j in range(4):
+        for i in range(4):
+            if pieza[i][j] != ".":
+                c+=1
+        if c != 0:
+            ct+=1
+        c = 0
+    return ct
+
+
+def altura_pieza(pieza):
+    c = 0
+    ct = 0
+    for i in range(4):
+        for j in range(4):
+            if pieza[i][j] != ".":
+                c += 1
+        if c != 0:
+            ct += 1
+        c = 0
+    return ct
+
+
+def normalizar_pieza(pieza):
+    nueva_matriz=[[".", ".", ".", "."], [".", ".", ".", "."], [".", ".", ".", "."], [".", ".", ".", "."]]
+    cord = cordenadas_pieza(pieza)
+    limite_superior = cord[0][0]
+    limite_izquierdo = 4
+    for x in range(4):
+        y = 0
+        while y < 4 and pieza[x][y] == ".":
+            y += 1
+        if y < limite_izquierdo:
+            limite_izquierdo = y
+    for i, j in cord:
+        nueva_matriz[i-limite_superior][j-limite_izquierdo] = pieza[i][j]
+    return nueva_matriz
+
+
+def modos_de_rotacion(s,m):
+    if s <= 4:
+        mn = rotar(s-1, m)
+    else:
+        mn = Swap(rotar(s-5, m))
+    return mn
+
+
+def verificar_espacio_disponible(tablero,cord,g,k):
+    c=0
+    for i, j in cord:
+        if tablero[i+g][j+k] == ".":
+            c += 1
+    if c == len(cord):
+        return 1
+    return 0
+
+def Insertar_Pieza(pieza,tablero):
+    pieza = normalizar_pieza(pieza)
+    cord = cordenadas_pieza(pieza)
+    #cont = 0
+    for g in range(len(tablero)-altura_pieza(pieza)+1):
+        for k in range(len(tablero[-1])-largo_pieza(pieza)+1):
+            tablero = matpuntos(len(tablero), len(tablero[-1]))
+            v = verificar_espacio_disponible(tablero, cord, g, k)
+            #print("El valor de g es:", g)
+            #print("El valor de k es:", k)
+            if v:
+                for i, j in cord:
+                    tablero[i+g][j+k] = pieza[i][j]
+                    #print("Fila:", i+g, "-", "Columna:", j+k)
+                imprime_arreglo(tablero)
+    return
+
+
+matrizpuntos = matpuntos(12, 18)
+for i in range(1,9):
+    print("--------------------------------")
+    print("Modo de rotación", i)
+    print("--------------------------------")
+    p = modos_de_rotacion(i, mat_ejemplo)
+    Insertar_Pieza(p,matrizpuntos)

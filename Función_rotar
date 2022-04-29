@@ -1,5 +1,4 @@
-#Dominio:  Dos enteros, FILAS y COLUMNAS
-#Codominio: una matriz nula de FILASxCOLUMNAS
+# Función generar matriz nula (genera una matriz de solo 0):
 def matVacia(FILAS, COLUMNAS):
     matResp = []
     for _ in range(FILAS):
@@ -8,37 +7,65 @@ def matVacia(FILAS, COLUMNAS):
             fila.append(0)
         matResp.append(fila)
     return matResp
-    
-#Dominio:   Una matriz mat
-#Codominio: La matriz transpuesta de mat
+
+
+# Función transponer matriz:
 def transpuesta(mat):
     F = len(mat)
     C = len(mat[0])
-    resp = matVacia(C,F)
+    resp = matVacia(C, F)
     for i in range(F):
         for j in range(C):
             resp[j][i] = mat[i][j]
     return resp
-    
-def printMatriz(mat):
-    for fil in mat:
-        print(fil)
-    print()
 
 
-#Dominio:   Una matriz mat
-#Codominio: La matriz transpuesta de mat
-def transpuesta(mat):
-    F = len(mat)
-    C = len(mat[0])
-    resp = matVacia(C,F)
-    for i in range(F):
-        for j in range(C):
-            resp[j][i] = mat[i][j]
-            
-def invertircolumnasmatriz(ma):
+# Función Swap matriz (Reflejar):
+def Swap(ma):
     mtrans = transpuesta(ma)
     mtransinvertida = matVacia(4,4)
     for linea in range(4):
         mtransinvertida[3-linea] = mtrans[linea]
     return transpuesta(mtransinvertida)
+
+
+# Función imprimir arreglo (Imprime la matriz de salida como un arreglo):
+def imprime_arreglo(q):
+    print()
+    for i in range(len(q)):
+        for j in range(len(q[-1])):
+            print(q[i][j], end=' ')
+        print()
+    print()
+
+# Función imprimir matriz (Imprime la matriz de salida):
+def imprime_matriz(mat):
+    for fil in mat:
+        print(fil)
+    print()
+
+# Función recibir matriz (recibe el arreglo de entrada  y lo convierte en matriz):
+def recibe_matriz():
+    matriz = []
+    for i in range(4):
+        z = []
+        a = input()
+        for i in a:
+            z.append(i)
+        matriz.append(z)
+    return matriz
+
+
+# Función rotar matriz (rota la matriz en 90dg "a" veces):
+def rotar(a,m):
+    for k in range(a):
+        m = Swap((transpuesta(m)))
+    return m
+
+r=recibe_matriz()
+for i in range(5):
+    veces = i
+    print("rotación:")
+    imprime_arreglo(rotar(veces, r))
+    print("rotación y swap:")
+    imprime_arreglo(Swap(rotar(veces, r)))

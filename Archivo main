@@ -1,13 +1,3 @@
-# Función generar matriz nula (genera una matriz de solo 0):
-def matVacia(FILAS, COLUMNAS):
-    matResp = []
-    for _ in range(FILAS):
-        fila = []
-        for _ in range(COLUMNAS):
-            fila.append(0)
-        matResp.append(fila)
-    return matResp
-
 def matpuntos(FILAS, COLUMNAS):
     matResp = []
     for _ in range(FILAS):
@@ -17,27 +7,7 @@ def matpuntos(FILAS, COLUMNAS):
         matResp.append(fila)
     return matResp
 
-# Función transponer matriz:
-def transpuesta(mat):
-    F = len(mat)
-    C = len(mat[0])
-    resp = matVacia(C, F)
-    for i in range(F):
-        for j in range(C):
-            resp[j][i] = mat[i][j]
-    return resp
 
-
-# Realiza el swap o reflexión horizontal de la matriz:
-def Swap(ma):
-    mtrans = transpuesta(ma)
-    mtransinvertida = matVacia(4,4)
-    for linea in range(4):
-        mtransinvertida[3-linea] = mtrans[linea]
-    return transpuesta(mtransinvertida)
-
-
-# Función imprimir arreglo (Imprime la matriz de salida como un arreglo):
 def imprime_arreglo(q):
     print()
     for i in range(len(q)):
@@ -46,13 +16,7 @@ def imprime_arreglo(q):
         print()
     print()
 
-# Función imprimir matriz (Imprime la matriz de salida):
-def imprime_matriz(mat):
-    for fil in mat:
-        print(fil)
-    print()
 
-# Función recibir matriz (recibe el arreglo de entrada  y lo convierte en matriz):
 def recibe_pieza():
     matriz = []
     for i in range(4):
@@ -63,13 +27,7 @@ def recibe_pieza():
         matriz.append(z)
     return matriz
 
-# Función rotar matriz (rota la matriz 90 grados en sentido horario "a" veces):
-def rotar(a,m):
-    for k in range(a):
-        m = Swap((transpuesta(m)))
-    return m
 
-# Copia o clona una matriz que se puede modificar sin que modifique la matirz original:
 def clonar_matriz(matriz):
     hija = []
     for i in matriz:
@@ -78,81 +36,67 @@ def clonar_matriz(matriz):
 
 
 def cordenadas_pieza(pieza):
-    cordenadas = []
+    cord = []
     for i in range(len(pieza)):
         for j in range(len(pieza[-1])):
             if pieza[i][j] != ".":
-                cordenadas.append([i, j])
-    return cordenadas
+                cord.append([i, j])
+    return cord
 
-#Función del largo de la pieza (ancho)
+
+def tope_abajo(tablero):
+    for i in range(len(tablero)-1, 0, -1):
+        for j in range(len(tablero[-1])):
+            if tablero[i][j] != ".":
+                return i
+
+
+def tope_derecha(tablero):
+    for j in range(len(tablero[-1])-1, 0, -1):
+        for i in range(len(tablero)):
+            if tablero[i][j] != ".":
+                return j
+
+
+def tope_izquierda(tablero):
+    for j in range(len(tablero[-1])):
+        for i in range(len(tablero)):
+            if tablero[i][j] != ".":
+                return j
+
+
 def largo_pieza(pieza):
-    c=0
-    ct=0
-    for j in range(len(pieza[-1])):
-        for i in range(len(pieza)):
-            if pieza[i][j] != ".":
-                c+=1
-        if c != 0:
-            ct+=1
-        c = 0
-    return ct
+    lp = tope_derecha(pieza) - tope_izquierda(pieza) + 1
+    return lp
 
-#Funcioón de la altura de la pieza
-def altura_pieza(pieza):
-    c = 0
-    ct = 0
-    for i in range(4):
-        for j in range(4):
-            if pieza[i][j] != ".":
-                c += 1
-        if c != 0:
-            ct += 1
-        c = 0
-    return ct
 
-# Matriz de la pieza la acomoda en la esquina superior izquierda
 def normalizar_pieza(pieza):
-    nueva_matriz=matpuntos(len(pieza), len(pieza[-1]))
+    nueva_matriz = matpuntos(len(pieza), len(pieza[-1]))
     cord = cordenadas_pieza(pieza)
     limite_superior = cord[0][0]
-    limite_izquierdo = len(pieza)
-    for x in range(len(pieza)):
-        y = 0
-        while y < len(pieza[-1]) and pieza[x][y] == ".":
-            y += 1
-        if y < limite_izquierdo:
-            limite_izquierdo = y
+    limite_izquierdo = tope_izquierda(pieza)
     for i, j in cord:
         nueva_matriz[i-limite_superior][j-limite_izquierdo] = pieza[i][j]
     return nueva_matriz
 
 
-def control_posicion(s, m):
-    mn = m
-    if s == 1:
-        mn = rotar(1, m)
-    elif s == 2:
-        mn = Swap(m)
-    return mn
-
-
-def verificar_espacio_disponible(tablero,cord,g,k):
-    c=0
+def verificar_sumaMatrices(tablero1, tablero2):
+    cord = cordenadas_pieza(tablero2)
+    c = 0
     for i, j in cord:
-        if tablero[i+g][j+k] == ".":
+        if tablero1[i][j] == ".":
             c += 1
     if c == len(cord):
-        return 1
-    return 0
+        return True
+    return False
 
 
-def es_solucion(tablero):
-    for i in range(len(tablero)):
-        for j in range(len(tablero[-1])):
-            if tablero[i][j] == ".":
-                return False
-    return True
+def sumaMatrices(m1, m2):
+    cord = cordenadas_pieza(m2)
+    for i, j in cord:
+        m1[i][j] = m2[i][j]
+    return m1
+
 
 def piezas_en_tablero(tablero):
     c = 0
@@ -164,226 +108,86 @@ def piezas_en_tablero(tablero):
     return c
 
 
-def base_arriba(tablero):
-    for i in range(0, len(tablero)-1):
-        for j in range(0, len(tablero[-1])-1):
-            if tablero[i][j] != ".":
-                return i
-    return 0
-
-
-def base_izquierda(tablero):
-    for j in range(0, len(tablero[-1])-1):
-        for i in range(0, len(tablero)-1):
-            if tablero[i][j] != ".":
-                return j
-    return 0
-
-
-def tope_abajo(tablero):
-    imax=0
+def es_solucion(tablero):
     for i in range(len(tablero)):
         for j in range(len(tablero[-1])):
-            if tablero[i][j] != "." and i>imax:
-                imax = i
-    return imax
-
-
-def tope_derecha(tablero):
-    jmax=0
-    for j in range(len(tablero[-1])):
-        for i in range(len(tablero)):
-            if tablero[i][j] != "." and j>jmax:
-                jmax = j
-    return jmax
-
-
-def esta(lista):
-    mat_ejemplo = [["+", "+", "+", "+", ".", "."],
-                   ["+", "%", ".", ".", ".", "."],
-                   ["*", "%", "%", ".", ".", "."],
-                   ["*", "%", ".", ".", ".", "."],
-                   ["*", "*", "*", ".",".","."]]
-    for i in range(len(lista)):
-        if lista[i] == mat_ejemplo:
-            return True
-        return False
-
-def ciclica(n): #Agrega 1 a 1 las piezas sin borrar la anterior
-    lista_piezas = []
-    for i in range(n):
-        matriz_entrada = clonar_matriz(recibe_pieza())
-        lista_piezas.append(matriz_entrada)
-        print()
-    pila=[]
-    pila.append(matpuntos(5,6))
-    while lista_piezas != []:
-        var = []
-        pieza = lista_piezas.pop()
-        while pila !=[]:
-            posicion = pila.pop()
-            if es_solucion(posicion):
-                print("La solución es:")
-                return imprime_arreglo(posicion)
-            var += Insertar_Pieza(pieza, posicion)
-        pila = var
-        print("Cantidad de combinaciones:", len(pila))
-    return
-
-def Insertar_Pieza(pieza_entrada,tablero):
-    respaldo = clonar_matriz(tablero)
-    contador = 0
-    for i in range(1,9):
-        pieza = modos_de_rotacion(i, pieza_entrada)
-        pieza = normalizar_pieza(pieza)
-        cord = cordenadas_pieza(pieza)
-        for g in range(len(tablero)-altura_pieza(pieza)+1):
-            for k in range(len(tablero[-1])-largo_pieza(pieza)+1):
-                tablero = clonar_matriz(respaldo)
-                v = verificar_espacio_disponible(tablero, cord, g, k)
-                if v:
-                    for i, j in cord:
-                        tablero[i+g][j+k] = pieza[i][j]
-                        #print("Fila:", i+g, "-", "Columna:", j+k)
-                    imprime_arreglo(tablero)
-                    contador += 1
-    print("Posibles posiciones:", contador)
-
-def verificar_sumaMatrices(tablero1,tablero2):
-    cord = cordenadas_pieza(tablero2)
-    c = 0
-    for i, j in cord:
-        if tablero1[i][j] == ".":
-            c += 1
-    if c == len(cord):
-        return 1
-    return 0
-
-
-def sumaMatrices(m1, m2):
-    cord = cordenadas_pieza(m2)
-    for i, j in cord:
-        m1[i][j] = m2[i][j]
-    return m1
-
-def restaMatrices(m1,m2):
-    cord = cordenadas_pieza(m2)
-    for i, j in cord:
-        if m1[i][j] == m2[i][j]:
-            m1[i][j] = "."
-    return m1
-
-
-def toma_entradas(n):
-    lista_piezas = []
-    for i in range(n):
-        matriz_entrada = clonar_matriz(recibe_pieza())
-        lista_piezas.append(matriz_entrada)
-        print()
-    return lista_piezas
-
-
-def ciclica1(n): #Agrega 1 a 1 las piezas sin borrar la anterior
-    lista_piezas = toma_entradas(n)
-    print("Ustes ha ingresado", len(lista_piezas), "piezas")
-    pila = []
-    pila.append(matpuntos(5, 6))
-    while pila != []:
-        posicion = pila.pop()
-        print("Se ha tomado de la pila el elemento:")
-        imprime_arreglo(posicion)
-        print("El largo de la pila es:", len(pila))
-        if(es_solucion(posicion)):
-            return imprime_arreglo(posicion)
-        else:
-            if len(pila) < len(lista_piezas):
-                hijo, memo = Insertar_Pieza2(lista_piezas[len(pila)], posicion)
-                pila.append(posicion)
-                pila.append(hijo)
-            else: break
-    return 0
-
-
-def Insertar_Pieza2(pieza,tablero):
-    tablero_vacio = matpuntos(len(tablero), len(tablero[-1]))
-    pieza_n = sumaMatrices(tablero_vacio, pieza)
-    s = 0
-    v = verificar_sumaMatrices(pieza_n, tablero)
-    while v == False:
-        pieza_n, s = next_Pieza(pieza_n, s)
-        v = verificar_sumaMatrices(pieza_n, tablero)
-    tablero = sumaMatrices(tablero, pieza_n)
-    return tablero, pieza_n
-
-#Esta función recibe un tablero con una pieza en cualquier posición y retorna un tablero con la pieza en
-#la posicion siguiente.
-def next_Pieza(tablero, s):
-    cord = cordenadas_pieza(tablero)
-    nuevo_tablero = matpuntos(len(tablero), len(tablero[-1]))
-    if tope_derecha(tablero)+1 < len(tablero[-1]):
-        for i, j in cord:
-            nuevo_tablero[i][j+1] = tablero[i][j]
-        return nuevo_tablero, s
-    elif tope_derecha(tablero) >= len(tablero[-1])-1 and tope_abajo(tablero)+1 < len(tablero):
-        for i, j in cord:
-            nuevo_tablero[i+1][j-(len(tablero[-1])-largo_pieza(tablero))] = tablero[i][j]
-        return nuevo_tablero, s
-    elif tope_derecha(tablero) >= len(tablero[-1])-1 and tope_abajo(tablero) >= len(tablero)-1:
-        if s == 7:
-            return 0
-        if s == 3:
-            s += 1
-            tablero = sumaMatrices(nuevo_tablero, control_posicion(2, control_posicion(1, normalizar_pieza(tablero))))
-            nuevo_tablero = tablero
-            return nuevo_tablero, s
-        s += 1
-        tablero = normalizar_pieza(tablero)
-        tablero = control_posicion(1, tablero)
-        tablero = normalizar_pieza(tablero)
-        nuevo_tablero = sumaMatrices(nuevo_tablero, tablero)
-        return nuevo_tablero, s
-
-
-
-def puedoMeterHijo(tab,val):
-    TAM = len(tab)
-    for i in range(TAM): ##Revisar todas las reinas puestas
-        if val == tab[i] or abs(i-TAM) == abs(val-tab[i]):
-            return False  ## Si encuentra una que choca, devuelve que no puede
+            if tablero[i][j] == ".":
+                return False
     return True
 
 
-
-prueba = [["*", ".", ".", ".", "*", "."],
-            [".", ".", "*", "*", ".", "."],
-            ["*", "*", ".", ".", ".", "*"],
-            [".", ".", ".", "*", ".", "*"],
-            ["*", "*", "*", "*", "*", "*"]]
-
-#Esta función encuentra todos los hijos de una tabla con una pieza especifica, los introduce
-#en la lista "resp".
-def hijos(pieza,raiz):
-    resp = []
-    tablero = matpuntos(len(raiz), len(raiz[-1]))
-    pieza = sumaMatrices(tablero, pieza)
-    if verificar_sumaMatrices(raiz, pieza):
-        nueva_matriz = sumaMatrices(clonar_matriz(raiz), clonar_matriz(pieza))
-        resp.append(nueva_matriz)
-    s = 0
-    while next_Pieza(pieza,s) != 0:
-        salida, s = next_Pieza(pieza, s)
-        pieza = salida
-        if verificar_sumaMatrices(raiz, salida):
-            nueva_matriz = sumaMatrices(clonar_matriz(raiz), clonar_matriz(salida))
-            resp.append(nueva_matriz)
+def transpuesta(mat):
+    F = len(mat)
+    C = len(mat[-1])
+    resp = matpuntos(C, F)
+    for i in range(F):
+        for j in range(C):
+            resp[j][i] = mat[i][j]
     return resp
 
-#Esta función aplica la pila al programa, toma el elemento de arriba de la pila (tope) el cual al inicio es una
-#matriz de solo puntos, evalua si el tope es lasolución, y si no lo es, llama a todos los hijos del tope
-#y los mete a la pila.
+
+def Swap(ma):
+    m_reflex = matpuntos(len(ma), len(ma[-1]))
+    for i in range(len(ma)):
+        for j in range(len(ma[-1])):
+            m_reflex[i][j] = ma[i][len(ma)-j-1]
+    return m_reflex
+
+
+def rotar(a, m):
+    for i in range(a):
+        m = normalizar_pieza(Swap(transpuesta(m)))
+    return m
+
+
+def esta_en_lista(matriz, lista):
+    for elem in lista:
+        if matriz == elem:
+            return True
+    return False
+
+def rotaciones(k, pieza):
+    if k == 0:
+        return pieza
+    if k == 4:
+        return normalizar_pieza(Swap(rotar(1, pieza)))
+    else:
+        return rotar(1, pieza)
+
+
+def Posiciones(tablero, pieza):
+    pos = []
+    tablero_puntos = clonar_matriz(tablero)
+    for k in range(8):
+        pieza = rotaciones(k, pieza)
+        cord = cordenadas_pieza(pieza)
+        l_pieza = largo_pieza(pieza)
+        h_pieza = cord[-1][0] - cord[0][0] + 1
+        for y in range(len(tablero)-h_pieza+1):
+            for x in range(len(tablero[-1])-l_pieza+1):
+                tablero = clonar_matriz(tablero_puntos)
+                for i, j in cord:
+                    tablero[i + y][j + x] = pieza[i][j]
+                if not esta_en_lista(tablero, pos):
+                    pos.append(tablero)
+    return pos
+
+
+def hijos(pieza, raiz):
+    resp = []
+    tablero = matpuntos(len(raiz), len(raiz[-1]))
+    pos = Posiciones(tablero, pieza)
+    for elem in pos:
+        if verificar_sumaMatrices(raiz, elem):
+            hijo = sumaMatrices(clonar_matriz(raiz), clonar_matriz(elem))
+            if not esta_en_lista(hijo, resp):
+                resp.append(hijo)
+    return resp
+
+
 def funcion_pila(lista_piezas):
     pila = []
-    pila.append(matpuntos(5, 9))
+    pila.append(matpuntos(5, 6))
     while pila != []:
         tope = pila.pop()
         if (es_solucion(tope)):
@@ -393,17 +197,39 @@ def funcion_pila(lista_piezas):
             pila.pop()
         elif piezas_en_tablero(tope) < len(lista_piezas):
             for hijo in hijos(lista_piezas[piezas_en_tablero(tope)], tope):
-                imprime_arreglo(hijo)
-                pila.append(hijo)
+                if not esta_en_lista(hijo,pila):
+                    imprime_arreglo(hijo)
+                    pila.append(hijo)
     return "fallo"
 
-#Esta funcion toda las piezas de entrada y las mete en una lista.
+
 def entrada(n):
     lista_piezas = []
     for i in range(n):
-        matriz_entrada = clonar_matriz(recibe_pieza())
+        matriz_entrada = recibe_pieza()
         lista_piezas.append(matriz_entrada)
         print()
     return lista_piezas
 
-imprime_arreglo(funcion_pila(entrada(9)))
+
+tablero_ejemplo = [[".", "+", ".", ".", ".", "."],
+                   [".", "+", "+", ".", ".", "."],
+                   [".", "+", ".", ".", ".", "."],
+                   [".", "+", ".", ".", ".", "."],
+                   [".", ".", ".", ".", ".", "."]]
+
+pieza_ejemplo = [["#", "#", ".", "."],
+                 [".", "#", "#", "#"],
+                 [".", ".", ".", "."],
+                 [".", ".", ".", "."]]
+
+
+#hijos = hijos(pieza_ejemplo, tablero_ejemplo)
+#print("---------------------------")
+#print("Elementos en hijos:")
+#print("---------------------------")
+#for elem in hijos:
+    #imprime_arreglo(elem)
+#print("La cantidad de elementos en hijos es:", len(hijos))
+
+imprime_arreglo(funcion_pila(entrada(2)))
